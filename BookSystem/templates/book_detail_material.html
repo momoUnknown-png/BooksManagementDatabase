@@ -1,0 +1,106 @@
+{% extends "layout_material.html" %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2" style="background: #f8f9fa;">
+                {% if book[7] and book[7].strip() %}
+                    <img src="{{ book[7] }}" 
+                         class="img-fluid border-radius-lg" 
+                         alt="书籍封面" 
+                         style="width: 100%; object-fit: contain; padding: 15px;"
+                         onerror="this.src='{{ url_for('static', filename='img/no-image.svg') }}';this.onerror=null;">
+                {% else %}
+                    <img src="{{ url_for('static', filename='img/no-image.svg') }}" 
+                         class="img-fluid border-radius-lg" 
+                         alt="书籍封面" 
+                         style="width: 100%; object-fit: contain; padding: 15px;">
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="font-weight-bold">{{ book[1] }}</h2>
+                <p class="text-muted">
+                    <i class="material-icons text-sm">tag</i> ISBN: {{ book[0] }}
+                </p>
+                <p class="text-muted">
+                    <i class="material-icons text-sm">person</i> 作者: {{ book[2] }} &nbsp;&nbsp;
+                    <i class="material-icons text-sm">calendar_today</i> 年份: {{ book[3] }}
+                </p>
+                <p><i class="material-icons text-sm">business</i> 出版社: {{ book[4] }}</p>
+                
+                <hr class="dark horizontal">
+                
+                <div class="d-flex align-items-center mb-3">
+                    <i class="material-icons text-warning me-2" style="font-size: 32px;">star</i>
+                    <h4 class="mb-0">平均评分: {{ avg_rating }} / 10</h4>
+                </div>
+
+                {% if session.get('user_id') %}
+                    <div class="card mt-4">
+                        <div class="card-body">
+                            <!-- 评分表单 -->
+                            <form method="post" class="mb-3">
+                                <input type="hidden" name="action" value="rate">
+                                <label class="form-label">我的评分 (当前: {{ my_rating or '未评' }})</label>
+                                <div class="input-group input-group-dynamic">
+                                    <input type="number" name="rating" min="1" max="10" class="form-control" placeholder="1-10分" required>
+                                    <button class="btn btn-primary mb-0 d-inline-flex align-items-center" type="submit">
+                                        <i class="material-icons me-1" style="font-size: 18px;">star_rate</i>打分
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- 加入想看 -->
+                            <form method="post" class="d-inline">
+                                <input type="hidden" name="action" value="wishlist">
+                                <button class="btn btn-danger d-inline-flex align-items-center" type="submit">
+                                    <i class="material-icons me-1" style="font-size: 18px;">favorite</i>加入想看
+                                </button>
+                            </form>
+                            
+                            <!-- 纠错按钮 -->
+                            <button class="btn btn-warning d-inline-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#editForm">
+                                <i class="material-icons me-1" style="font-size: 18px;">edit</i>纠错反馈
+                            </button>
+                            
+                            <!-- 纠错表单 -->
+                            <div class="collapse mt-3" id="editForm">
+                                <form method="post">
+                                    <input type="hidden" name="action" value="request_edit">
+                                    <div class="input-group input-group-dynamic">
+                                        <textarea name="content" class="form-control" rows="3" placeholder="请描述错误信息（如：作者名字写错...）" required></textarea>
+                                    </div>
+                                    <button class="btn btn-sm btn-warning mt-2 d-inline-flex align-items-center" type="submit">
+                                        <i class="material-icons me-1" style="font-size: 18px;">send</i>提交申请
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <i class="material-icons">info</i>
+                        请 <a href="/login" class="alert-link">登录</a> 后进行评分或收藏。
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <a href="/" class="btn btn-outline-primary d-inline-flex align-items-center">
+            <i class="material-icons me-1" style="font-size: 18px;">arrow_back</i>返回首页
+        </a>
+    </div>
+</div>
+
+{% endblock %}

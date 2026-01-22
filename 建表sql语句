@@ -1,0 +1,60 @@
+CREATE TABLE books (
+    isbn VARCHAR(20) PRIMARY KEY,
+    book_title TEXT,
+    book_author TEXT,
+    year_of_publication TEXT,
+    publisher TEXT,
+    image_url_s TEXT,
+    image_url_m TEXT,
+    image_url_l TEXT
+);
+
+CREATE TABLE users (
+    user_id INTEGER PRIMARY KEY,
+    location TEXT,
+    age INTEGER
+);
+
+CREATE TABLE ratings (
+    rating_id SERIAL PRIMARY KEY,
+    user_id INTEGER, 
+    isbn VARCHAR(20), 
+    book_rating INTEGER
+);
+
+ALTER TABLE ratings ADD CONSTRAINT fk_ratings_users FOREIGN KEY (user_id) REFERENCES users(user_id);
+
+ALTER TABLE ratings ADD CONSTRAINT fk_ratings_books FOREIGN KEY (isbn) REFERENCES books(isbn);
+
+CREATE TABLE user_accounts (
+    user_id INTEGER PRIMARY KEY REFERENCES users(user_id),
+    password VARCHAR(100) DEFAULT '123456',
+    role VARCHAR(20) DEFAULT 'user',
+    last_login TIMESTAMP
+);
+
+INSERT INTO user_accounts (user_id) 
+SELECT user_id FROM users;
+
+CREATE TABLE appealing_books (
+    user_id INTEGER REFERENCES users(user_id),
+    isbn VARCHAR(20) REFERENCES books(isbn),
+    added_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, isbn)
+);
+
+CREATE TABLE book_requests (
+    request_id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(user_id),
+    isbn VARCHAR(20) REFERENCES books(isbn),
+    request_type VARCHAR(20) NOT NULL,
+    content TEXT, 
+    status VARCHAR(20) DEFAULT 'PENDING',
+    processed_by INTEGER REFERENCES users(user_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    processed_at TIMESTAMP
+);
+
+UPDATE user_accounts 
+SET role = 'admin' 
+WHERE user_id = 1;

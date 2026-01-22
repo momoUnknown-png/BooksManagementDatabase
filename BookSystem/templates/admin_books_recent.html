@@ -1,0 +1,49 @@
+{% extends "admin_layout.html" %}
+{% block admin_content %}
+
+<div class="card shadow-lg">
+  <div class="card-header bg-gradient-primary text-white">
+    <h5 class="mb-0 text-white">最近修改的图书</h5>
+  </div>
+
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table align-items-center mb-0">
+        <thead>
+          <tr>
+            <th style="width: 130px;">ISBN</th>
+            <th style="width: 300px;">书名</th>
+            <th style="width: 180px;">作者</th>
+            <th class="text-center" style="width: 100px;">操作</th>
+            <th style="width: 180px;">时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for op in operations %}
+          <tr>
+            <td>{{ op[0] }}</td>
+            <td style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ op[1] }}">{{ op[1] }}</td>
+            <td style="max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ op[2] }}">{{ op[2] }}</td>
+            <td class="text-center">
+              {% if op[3] == 'MODIFY' %}
+                <span class="badge bg-primary">编辑</span>
+              {% elif op[3] == 'DELETE' %}
+                <span class="badge bg-danger">删除</span>
+              {% else %}
+                {{ op[3] }}
+              {% endif %}
+            </td>
+            <td>{{ op[4] }}</td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="5" class="text-center text-muted">暂无操作记录</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

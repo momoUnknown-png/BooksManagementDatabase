@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>书海泛舟——图书搜索与评分系统</title>
+    
+    <!-- Fonts and icons -->
+    <!-- <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
+    
+    <link rel="stylesheet" type="text/css" href="https://fonts.loli.net/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+    <link href="https://fonts.loli.net/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Material Kit CSS (本地文件) -->
+    <link href="{{ url_for('static', filename='css/material-kit.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/nucleo-icons.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/nucleo-svg.css') }}" rel="stylesheet" />
+    
+    <!-- 自定义样式 -->
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            /* background: linear-gradient(135deg, #6dd5ed 0%, #2193b0 100%); */
+            /* background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); */
+            /* background: linear-gradient(135deg, #c3b091 0%, #654321 100%); */
+            /* background: linear-gradient(135deg, #4b3621 0%, #1a0f00 100%); */
+            /* background: linear-gradient(135deg, #2c3e50 0%, #000000 100%); */
+            /* background: linear-gradient(135deg, #4a0404 0%, #120000 100%); */
+            min-height: 100vh;
+        }
+        .main-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        .book-card {
+            transition: transform 0.3s;
+        }
+        .book-card:hover {
+            transform: translateY(-10px);
+        }.dropdown-menu::before,
+        .dropdown-menu::after {
+            display: none !important;
+            content: none !important;
+        }
+    </style>
+</head>
+<body class="index-page">
+    
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg position-absolute top-0 z-index-3 w-100 shadow-none my-3 navbar-transparent">
+        <div class="container">
+            <a class="navbar-brand text-white font-weight-bolder ms-lg-0 ms-3 d-flex align-items-center" href="/" style="line-height: 1.2;">
+                <i class="material-icons me-2" style="font-size: 2rem;">auto_stories</i>
+                <div>
+                    <div style="font-size: 1.3rem; font-weight: bold;">书海泛舟</div>
+                    <div style="font-size: 0.75rem; font-weight: normal; opacity: 0.9;">图书搜索与评分系统</div>
+                </div>
+            </a>
+            <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navigation">
+                <span class="navbar-toggler-icon mt-2">
+                    <span class="navbar-toggler-bar bar1"></span>
+                    <span class="navbar-toggler-bar bar2"></span>
+                    <span class="navbar-toggler-bar bar3"></span>
+                </span>
+            </button>
+            <div class="collapse navbar-collapse w-100 pt-3 pb-2 py-lg-0" id="navigation">
+                <ul class="navbar-nav navbar-nav-hover ms-auto align-items-center">
+                    {% if session.get('user_id') %}
+                        <li class="nav-item d-flex align-items-center">
+                            <span class="nav-link text-white d-flex align-items-center mb-0">
+                                <i class="material-icons me-1">account_circle</i> 
+                                <span>用户: {{ session['user_id'] }}</span>
+                                {% if session.get('role') == 'admin' %} <span class="badge bg-warning ms-2">管理员</span> {% endif %}
+                            </span>
+                        </li>
+                        {% if session.get('role') == 'admin' %}
+                        <li class="nav-item d-flex align-items-center">
+                            <a class="nav-link text-white d-flex align-items-center mb-0" href="/admin">
+                                <i class="material-icons me-1">settings</i> 
+                                <span>管理后台</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        <li class="nav-item dropdown d-flex align-items-center">
+                            <a class="nav-link text-white d-flex align-items-center mb-0" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="material-icons me-1">person</i> 
+                                <span>用户菜单</span>
+                                <i class="material-icons ms-1">arrow_drop_down</i>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{{ url_for('profile') }}">个人主页</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('logout') }}">退出</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item d-flex align-items-center">
+                            <a class="nav-link text-white d-flex align-items-center mb-0" href="/login">
+                                <i class="material-icons me-1">login</i> 
+                                <span>登录</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Header -->
+    <header class="header-2">
+        <div class="page-header min-vh-50" style="background-image: url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=1920')">
+            <span class="mask bg-gradient-primary opacity-4"></span>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 mx-auto text-white text-center pt-5 mt-5">
+                        <h1 class="text-white">探索知识的海洋</h1>
+                        <p class="lead">搜索、发现、评分您喜爱的图书</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container mt-n6" style="position: relative; z-index: 2;">
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        <span class="alert-icon"><i class="material-icons">notifications</i></span>
+                        <span class="alert-text">{{ message }}</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <div class="main-content">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer pt-5 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="text-white">© 2025 书海泛舟——图书搜索与评分系统</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Material Kit Core JS (本地文件) -->
+    <script src="{{ url_for('static', filename='js/core/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/core/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/material-kit.min.js') }}"></script>
+</body>
+</html>

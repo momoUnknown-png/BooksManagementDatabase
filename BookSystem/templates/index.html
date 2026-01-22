@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="text-center py-5">
+    <h1 class="display-4">图书检索系统</h1>
+    <p class="lead text-muted">欢迎使用，请搜索您感兴趣的书籍</p>
+</div>
+
+<div class="row justify-content-center mb-5">
+    <div class="col-md-8">
+        <form action="/" method="get">
+            <div class="input-group input-group-lg shadow-sm">
+                <input type="text" name="q" class="form-control" placeholder="输入书名关键词..." value="{{ search_query }}">
+                <button class="btn btn-primary px-4" type="submit">🔍 搜索</button>
+                <a href="/" class="btn btn-outline-secondary">重置</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for book in books %}
+    <div class="col">
+        <div class="card h-100 shadow-sm">
+            <div class="row g-0">
+                <div class="col-4">
+                    <a href="/book/{{ book[0] }}">
+                        <img src="{{ book[4] }}" class="img-fluid rounded-start" alt="封面" style="height: 100%; object-fit: cover;">
+                    </a>
+                </div>
+                <div class="col-8">
+                    <div class="card-body">
+                        <h5 class="card-title text-truncate">
+                            <a href="/book/{{ book[0] }}" class="text-decoration-none text-dark">{{ book[1] }}</a>
+                        </h5>
+                        <p class="card-text text-muted small">
+                            作者: {{ book[2] }}<br>
+                            年份: {{ book[3] }}
+                        </p>
+                        <a href="/book/{{ book[0] }}" class="btn btn-sm btn-outline-primary">详情</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12 text-center text-muted">
+        <p>没有找到相关书籍。</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "admin_layout.html" %}
+{% block admin_content %}
+
+<div class="row">
+
+  <div class="col-md-4">
+    <div class="card shadow-lg text-center">
+      <div class="card-body">
+        <i class="material-icons text-info">pending_actions</i>
+        <h5 class="mt-2">待处理申请</h5>
+        <a href="/admin/requests/pending" class="btn btn-info btn-sm">
+          查看
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card shadow-lg text-center">
+      <div class="card-body">
+        <i class="material-icons text-success">menu_book</i>
+        <h5 class="mt-2">图书管理</h5>
+        <a href="/admin/books" class="btn btn-success btn-sm">
+          进入
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends "admin_layout.html" %}
+{% block admin_content %}
+
+<div class="card shadow-lg">
+  <div class="card-header text-white
+    {% if status == 'PENDING' %}bg-gradient-warning
+    {% elif status == 'APPROVED' %}bg-gradient-success
+    {% elif status == 'REJECTED' %}bg-gradient-danger
+    {% else %}bg-gradient-warning
+    {% endif %}">
+    <h5 class="mb-0 text-white">
+      {% if status == 'PENDING' %}待处理申请
+      {% elif status == 'APPROVED' %}已通过申请
+      {% elif status == 'REJECTED' %}已驳回申请
+      {% else %}{{ status }} 的申请
+      {% endif %}
+    </h5>
+  </div>
+
+  <div class="card-body">
+    <table class="table align-items-center mb-0">
+      <thead>
+        <tr>
+          <th class="text-center" style="width: 50px;">ID</th>
+          <th style="width: 120px;">ISBN</th>
+          <th class="text-center" style="width: 70px;">类型</th>
+          <th style="width: 280px;">内容</th>
+          <th style="width: 160px;">时间</th>
+          <th class="text-center" style="width: auto;">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in requests %}
+        <tr>
+          <td class="text-center align-middle">{{ r[0] }}</td>
+          <td class="align-middle" style="font-size: 0.85rem;">{{ r[2] }}</td>
+          <td class="text-center align-middle">
+            {% if r[3] == 'MODIFY' %}
+              <span class="badge bg-info">修改</span>
+            {% elif r[3] == 'ADD' %}
+              <span class="badge bg-success">添加</span>
+            {% else %}
+              {{ r[3] }}
+            {% endif %}
+          </td>
+          <td class="align-middle">
+            <span style="display: inline-block; max-width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle;">{{ r[4] }}</span>
+            <a href="#" data-bs-toggle="modal" data-bs-target="#contentModal{{ r[0] }}" 
+               class="ms-1" 
+               style="color: #1976d2; text-decoration: none; white-space: nowrap; vertical-align: middle;"
+               onclick="event.preventDefault();">更多...</a>
+          </td>
+          <td class="align-middle" style="font-size: 0.85rem;">{{ r[7] }}</td>
+          <td class="text-center align-middle">
+            {% if status == 'PENDING' %}
+              <form method="post" action="/admin/request/approve/{{ r[0] }}" class="d-inline" onsubmit="return confirm('确认批准该申请？')">
+                <button class="btn btn-success btn-sm me-1">
+                  批准
+                </button>
+              </form>
+              <form method="post" action="/admin/request/reject/{{ r[0] }}" class="d-inline" onsubmit="return confirm('确认驳回该申请？')">
+                <button class="btn btn-danger btn-sm me-1">
+                  驳回
+                </button>
+              </form>
+            {% endif %}
+            {% if r[2] %}
+              <a href="/book/{{ r[2] }}" class="btn btn-primary btn-sm">
+                查看书籍
+              </a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 模态框 -->
+{% for r in requests %}
+<div class="modal fade" id="contentModal{{ r[0] }}" tabindex="-1" aria-labelledby="modalLabel{{ r[0] }}" aria-hidden="true" data-bs-backdrop="false">
+  <div class="modal-dialog">
+    <div class="modal-content shadow-lg">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLabel{{ r[0] }}">申请详情 #{{ r[0] }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>ISBN:</strong> {{ r[2] }}</p>
+        <p><strong>类型:</strong> 
+          {% if r[3] == 'MODIFY' %}修改
+          {% elif r[3] == 'ADD' %}添加
+          {% else %}{{ r[3] }}{% endif %}
+        </p>
+        <p><strong>申请内容:</strong></p>
+        <p class="text-break">{{ r[4] }}</p>
+        <p><strong>提交时间:</strong> {{ r[7] }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">关闭</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+{% endblock %}

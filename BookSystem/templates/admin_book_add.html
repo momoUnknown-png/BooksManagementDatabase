@@ -1,0 +1,63 @@
+{% extends "admin_layout.html" %}
+{% block admin_content %}
+
+<div class="row justify-content-center">
+  <div class="col-md-6">
+
+    <div class="card shadow-lg mt-4">
+      <div class="card-header bg-gradient-success text-white">
+        <h5 class="mb-0">
+          <i class="material-icons">add</i> 添加图书
+        </h5>
+      </div>
+
+      <div class="card-body">
+        <form method="post">
+
+          <div class="input-group input-group-outline mb-3">
+            <label class="form-label">ISBN</label>
+            <input name="isbn" class="form-control" required>
+          </div>
+
+          <div class="input-group input-group-outline mb-3">
+            <label class="form-label">书名</label>
+            <input name="title" class="form-control" required>
+          </div>
+
+          <div class="input-group input-group-outline mb-3">
+            <label class="form-label">作者</label>
+            <input name="author" class="form-control">
+          </div>
+
+          <div class="input-group input-group-outline mb-3">
+            <label class="form-label">年份</label>
+            <input name="year" class="form-control">
+          </div>
+
+          <div class="input-group input-group-outline mb-3">
+            <label class="form-label">出版社</label>
+            <input name="publisher" class="form-control">
+          </div>
+
+          <div class="input-group input-group-outline mb-4">
+            <label class="form-label">封面图片 URL</label>
+            <input name="image_url_m" class="form-control">
+          </div>
+
+          <div class="d-flex justify-content-between">
+            <button class="btn bg-gradient-success">
+              提交
+            </button>
+            <a href="/admin/books" class="btn btn-outline-secondary">
+              返回
+            </a>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
