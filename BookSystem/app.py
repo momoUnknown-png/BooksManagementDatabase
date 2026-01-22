@@ -131,6 +131,7 @@ def book_detail(isbn):
     avg_rating = cur.fetchone()[0] or '暂无'
 
     my_rating = None
+    in_wishlist = False
     if 'user_id' in session:
         cur.execute("""
             SELECT book_rating FROM ratings
@@ -139,6 +140,13 @@ def book_detail(isbn):
         r = cur.fetchone()
         if r:
             my_rating = r[0]
+        
+        # 检查是否已加入想看
+        cur.execute("""
+            SELECT 1 FROM appealing_books
+            WHERE user_id=%s AND isbn=%s
+        """, (session['user_id'], isbn))
+        in_wishlist = cur.fetchone() is not None
 
     cur.close()
     conn.close()
@@ -146,7 +154,8 @@ def book_detail(isbn):
         'book_detail_material.html',
         book=book,
         avg_rating=avg_rating,
-        my_rating=my_rating
+        my_rating=my_rating,
+        in_wishlist=in_wishlist
     )
 
 # =============== 管理员部分 ====================
