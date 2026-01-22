@@ -108,12 +108,29 @@ def book_detail(isbn):
             flash('评分已更新！', 'success')
             
         elif action == 'wishlist':
+            # 检查是否已存在
             cur.execute("""
-                INSERT INTO appealing_books (user_id, isbn)
-                VALUES (%s, %s) ON CONFLICT DO NOTHING
+                SELECT 1 FROM appealing_books 
+                WHERE user_id=%s AND isbn=%s
             """, (uid, isbn))
-            conn.commit()
-            flash('已加入想看的书单', 'success')
+            exists = cur.fetchone()
+            
+            if exists:
+                # 已存在，删除（取消想看）
+                cur.execute("""
+                    DELETE FROM appealing_books 
+                    WHERE user_id=%s AND isbn=%s
+                """, (uid, isbn))
+                conn.commit()
+                flash('已取消想看', 'info')
+            else:
+                # 不存在，添加
+                cur.execute("""
+                    INSERT INTO appealing_books (user_id, isbn)
+                    VALUES (%s, %s)
+                """, (uid, isbn))
+                conn.commit()
+                flash('已加入想看的书单', 'success')
 
         elif action == 'request_edit':
             content = request.form.get('content')

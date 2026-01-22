@@ -61,12 +61,12 @@
                             <form method="post" class="d-inline">
                                 <input type="hidden" name="action" value="wishlist">
                                 {% if in_wishlist %}
-                                    <button class="btn btn-secondary d-inline-flex align-items-center" type="submit" disabled>
-                                        <i class="material-icons me-1" style="font-size: 18px;">check</i>已加入想看
+                                    <button class="btn btn-outline-danger d-inline-flex align-items-center" type="submit">
+                                        <i class="material-icons me-1" style="font-size: 18px;">favorite</i>取消想看
                                     </button>
                                 {% else %}
                                     <button class="btn btn-danger d-inline-flex align-items-center" type="submit">
-                                        <i class="material-icons me-1" style="font-size: 18px;">favorite</i>加入想看
+                                        <i class="material-icons me-1" style="font-size: 18px;">favorite_border</i>加入想看
                                     </button>
                                 {% endif %}
                             </form>
